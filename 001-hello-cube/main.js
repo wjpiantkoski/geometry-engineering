@@ -33,13 +33,13 @@ function main() {
   const geometry = new THREE.BoxGeometry(1, 1, 1); // width, height, depth
 
   // create a Material
-  const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 });
+  // const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 });
 
   // create a Mesh (Geometry + Material + position + orientation)
-  const cube = new THREE.Mesh(geometry, material);
+  // const cube = new THREE.Mesh(geometry, material);
 
   // add the mesh to the scene
-  scene.add(cube);
+  // scene.add(cube);
 
   // render ir
   renderer.render(scene, camera);
@@ -47,19 +47,6 @@ function main() {
   // managing rotation speed to match different screen frame rates
   const clock = new THREE.Clock();
   const rotationSpeed = Math.PI / 2; // Rotates 90 degrees (PI/2 radians) per second
-
-  function render() {
-    const deltaTime = clock.getDelta();
-
-    cube.rotation.x += rotationSpeed * deltaTime;
-    cube.rotation.y += rotationSpeed * deltaTime;
-
-    renderer.render(scene, camera);
-
-    requestAnimationFrame(render);
-  }
-
-  requestAnimationFrame(render);
 
   // adding some light
   const light = new THREE.DirectionalLight(
@@ -69,6 +56,38 @@ function main() {
 
   light.position.set(-1, 2, 4);
   scene.add(light);
+
+  function makeInstance(geometry, color, x) {
+    const material = new THREE.MeshPhongMaterial({ color });
+    const cube = new THREE.Mesh(geometry, material);
+
+    scene.add(cube);
+
+    cube.position.x = x;
+
+    return cube;
+  }
+
+  const cubes = [
+    makeInstance(geometry, 0x44aa88, 0),
+    makeInstance(geometry, 0x8844aa, -2),
+    makeInstance(geometry, 0xaa8844, 2),
+  ];
+
+  function render() {
+    const deltaTime = clock.getDelta();
+
+    cubes.forEach((cube, ndx) => {
+      cube.rotation.x += rotationSpeed * deltaTime;
+      cube.rotation.y += rotationSpeed * deltaTime;
+    });
+
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
+  }
+
+  requestAnimationFrame(render);
 }
 
 main();
